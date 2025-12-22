@@ -1,6 +1,7 @@
 # 🃏 Card Sudoku 4×4
 
 Juego de solitario tipo puzzle con cartas, estilo Sudoku 4×4.
+## 🎮 [Jugar](https://angelchv.github.io/card-sudoku/)
 
 ---
 
