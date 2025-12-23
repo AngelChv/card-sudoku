@@ -4,6 +4,7 @@ const ranks = ["A", "J", "Q", "K"];
 const grid = document.getElementById("grid");
 const message = document.getElementById("message");
 
+let interactionLock = false; // bloquea multitouch / multi-click
 let selectedCard = null;
 let draggedCard = null;
 let startX = 0, startY = 0;
@@ -37,21 +38,29 @@ function render() {
 
 // --- Click para seleccionar y swap ---
 function onCardClick(card) {
+  if (interactionLock || draggedCard) return;
+
   if (!selectedCard) {
+    clearSelection();
     selectedCard = card;
     card.classList.add("selected");
     return;
   }
 
   if (selectedCard === card) {
-    selectedCard.classList.remove("selected");
-    selectedCard = null;
+    clearSelection();
     return;
   }
 
   swapClickAnimation(selectedCard, card);
-  selectedCard.classList.remove("selected");
-  selectedCard = null;
+  clearSelection();
+}
+
+function clearSelection() {
+  if (selectedCard) {
+    selectedCard.classList.remove("selected");
+    selectedCard = null;
+  }
 }
 
 // --- Animación click → ambas cartas se mueven ---
@@ -143,6 +152,10 @@ function onTouchEnd(e) {
 
 // --- Drag helpers ---
 function startDrag(x, y, card) {
+  if (interactionLock) return;
+
+  interactionLock = true;
+
   draggedCard = card;
   startX = x;
   startY = y;
@@ -161,17 +174,21 @@ function endDrag(x, y) {
 
   const dx = x - startX;
   const dy = y - startY;
-  const distance = Math.sqrt(dx*dx + dy*dy);
+  const distance = Math.hypot(dx, dy);
 
   draggedCard.classList.remove("dragging");
   draggedCard.style.transform = "";
 
+  // TAP (equivalente a click)
   if (distance < DRAG_THRESHOLD) {
-    draggedCard.click();
+    const card = draggedCard;
     draggedCard = null;
+    interactionLock = false;
+    onCardClick(card);
     return;
   }
 
+  // DRAG real
   draggedCard.style.pointerEvents = 'none';
   const dropTarget = document.elementFromPoint(x, y)?.closest("playing-card");
   draggedCard.style.pointerEvents = '';
@@ -181,6 +198,7 @@ function endDrag(x, y) {
   }
 
   draggedCard = null;
+  interactionLock = false;
 }
 
 // --- Validación puzzle ---
