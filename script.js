@@ -164,6 +164,9 @@ function startDrag(x, y, card) {
 
 function moveDrag(x, y) {
   if (!draggedCard) return;
+
+  clearSelection();
+
   const dx = x - startX;
   const dy = y - startY;
   draggedCard.style.transform = `translate(${dx}px, ${dy}px) scale(1.1)`;
