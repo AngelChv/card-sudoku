@@ -1,3 +1,7 @@
+:root {
+  --ui-scale: clamp(0.95rem, 1.1vw + 0.5rem, 1.1rem);
+}
+
 /* ===== Reset ===== */
 *,
 *::before,
@@ -25,12 +29,20 @@ body {
 }
 
 /* ===== Header ===== */
-h1 {
+header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+
+  padding: 0.8rem 1rem;
+}
+
+header h1 {
+  grid-column: 2;
   text-align: center;
-  font-size: clamp(2rem, 8vw, 8rem);
+
+  font-size: clamp(1.6rem, 5vw, 3.2rem);
   font-weight: 600;
-  margin-top: 1rem;
-  padding-top: 2rem;
 }
 
 /* ===== Grid de cartas ===== */
@@ -45,7 +57,7 @@ h1 {
   aspect-ratio: 1/1;
   justify-self: center;
   align-self: center;
-  padding: 2rem;
+  padding: clamp(0.8rem, 3vw, 2rem);
 }
 
 /* ===== Cartas ===== */
@@ -98,13 +110,13 @@ footer {
 }
 
 /* ===== Button ===== */
-button {
+.primary-btn {
   appearance: none;
   border: none;
   border-radius: 999px;
   margin-bottom: 2rem;
-  padding: 2rem;
-  font-size: clamp(1.5rem, 5vw, 4rem);
+  padding: 1rem 1.6rem;
+  font-size: clamp(1.1rem, 4vw, 1.6rem);
   font-weight: 600;
   background: #1c2230;
   color: #f2f2f2;
@@ -114,9 +126,8 @@ button {
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-button:active {
+.primary-btn:active {
   transform: scale(0.96);
-  box-shadow: 0 0.25rem 0.9rem rgba(0,0,0,0.6);
 }
 
 /* ===== Message ===== */
@@ -170,5 +181,119 @@ button:active {
   }
   100% {
     transform: scale(1);
+  }
+}
+
+/* ===== Botón reglas ===== */
+.rules-btn {
+  grid-column: 3;
+  justify-self: end;
+
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+
+  display: grid;
+  place-items: center;
+
+  font-size: 1.2rem;
+  line-height: 1;
+
+  background: #1c2230;
+  color: #f2f2f2;
+  border-radius: 50%;
+  cursor: pointer;
+
+  box-shadow: 0 0.4rem 1rem rgba(0,0,0,0.4);
+}
+
+/* ===== Modal reglas ===== */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: grid;
+  place-items: center;
+  z-index: 100;
+}
+
+.hidden {
+  display: none;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 0.5rem;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: calc(var(--ui-scale) * 1.4);
+  line-height: 1.2;
+}
+
+.modal-content {
+  position: relative;
+  background: #1c2230;
+  color: #f2f2f2;
+
+  padding: 1.4em;
+  border-radius: 1rem;
+
+  width: min(92vw, 42rem);
+  max-height: 82svh;
+
+  font-size: var(--ui-scale);
+  line-height: 1.5;
+
+  overflow-y: auto;
+}
+
+.modal-content h2 {
+  font-size: calc(var(--ui-scale) * 1.4);
+  margin-bottom: 1rem;
+}
+
+.modal-content ul {
+  margin-left: 1.2em;
+}
+
+.modal-content p,
+.modal-content li {
+  font-size: 1em;
+}
+
+.close-btn {
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0;
+
+  display: grid;
+  place-items: center;
+
+  font-size: 1.2rem;
+  line-height: 1;
+
+  background: rgba(255,255,255,0.05);
+  color: #f2f2f2;
+
+  border-radius: 50%;
+  box-shadow: none;
+}
+
+@media (hover: hover) {
+  .close-btn:hover {
+    background: rgba(255,255,255,0.08);
+  }
+}
+
+@media (max-width: 360px) {
+  .rules-btn {
+    width: 2.8rem;
+    height: 2.8rem;
+    font-size: 1.4rem;
   }
 }

@@ -1,25 +1,58 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>🃏 Sudoku de Cartas</title>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>🃏 Sudoku de Cartas</title>
 
-  <!-- Web Component de cartas -->
-  <script src="https://cdn.jsdelivr.net/gh/cardmeister/cardmeister.github.io/elements.cardmeister.full.js"></script>
+    <!-- Web Component de cartas -->
+    <script src="https://cdn.jsdelivr.net/gh/cardmeister/cardmeister.github.io/elements.cardmeister.full.js"></script>
 
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>🃏 Sudoku de Cartas</h1>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <header>
+      <h1>🃏 Sudoku de Cartas</h1>
 
-  <div id="grid"></div>
+      <button id="rulesBtn" class="rules-btn" aria-label="Ver reglas">ℹ️</button>
+    </header>
 
-  <p id="message"></p>
+    <div id="grid"></div>
 
-  <footer>
-    <button id="check">Validar</button>
-  </footer>
+    <p id="message"></p>
 
-  <script src="script.js"></script>
-</body>
+    <footer>
+      <button id="check" class="primary-btn">Validar</button>
+    </footer>
+
+    <div id="rulesModal" class="modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>🃏 Reglas</h2>
+
+          <button id="closeRules" class="close-btn" aria-label="Cerrar reglas">✕</button>
+        </div>
+
+        <ul>
+          <li>El tablero es de <strong>4×4</strong></li>
+          <li>Figuras: <strong>A, J, Q, K</strong></li>
+          <li>Palos: <strong>♠ ♥ ♦ ♣</strong></li>
+        </ul>
+
+        <p><strong>No se puede repetir:</strong></p>
+        <ul>
+          <li>Figura ni palo en una fila</li>
+          <li>Figura ni palo en una columna</li>
+          <li>Figura ni palo en las dos diagonales grandes</li>
+        </ul>
+
+        <p>
+        Intercambia cartas tocándolas o arrastrándolas.<br>
+        ¡Cuando todo sea correcto, ganas! 🎉
+        </p>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
 </html>

@@ -329,6 +329,29 @@ function resetGame() {
   checkButton.onclick = validate;
 }
 
+// --- Reglas ---
+const rulesBtn = document.getElementById("rulesBtn");
+const rulesModal = document.getElementById("rulesModal");
+const closeRules = document.getElementById("closeRules");
+
+rulesBtn.addEventListener("click", () => {
+  rulesModal.classList.remove("hidden");
+});
+
+closeRules.addEventListener("click", closeRulesModal);
+
+rulesModal.addEventListener("click", (e) => {
+  if (e.target === rulesModal) closeRulesModal();
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeRulesModal();
+});
+
+function closeRulesModal() {
+  rulesModal.classList.add("hidden");
+}
+
 // --- Botón validar ---
 checkButton.onclick = validate;
 
