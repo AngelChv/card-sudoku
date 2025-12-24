@@ -1,24 +1,61 @@
+// --- Modos de depuración ---
+const DebugMode = Object.freeze({
+  OFF: "off",
+  SOLVED: "solved",
+  ONE_MOVE: "one-move"
+});
+
+// --- Configuración ---
+let currentDebugMode = DebugMode.ONE_MOVE;
+
+// Detectar si estamos en producción (GitHub Pages)
+if (window.location.hostname === "angelchv.github.io") {
+  currentDebugMode = DebugMode.OFF;
+}
+
+const SOLVED_DECK = [
+  "AD", "QS", "KH", "JC",
+  "KC", "JH", "AS", "QD",
+  "JS", "KD", "QC", "AH",
+  "QH", "AC", "JD", "KS"
+];
+
 const suits = ["S", "H", "D", "C"];
 const ranks = ["A", "J", "Q", "K"];
 
 const grid = document.getElementById("grid");
 const message = document.getElementById("message");
+const checkButton = document.getElementById("check");
 
 let interactionLock = false; // bloquea multitouch / multi-click
 let selectedCard = null;
 let draggedCard = null;
 let startX = 0, startY = 0;
 const DRAG_THRESHOLD = 8;
+let gameCompleted = false;
 
 // --- Crear baraja ---
 function createDeck() {
+  switch (currentDebugMode) {
+    case DebugMode.SOLVED:
+      return [...SOLVED_DECK];
+    case DebugMode.ONE_MOVE:
+      const deck = [...SOLVED_DECK];
+      [deck[0], deck[1]] = [deck[1], deck[0]];
+      return deck;
+    default:
+      return shuffle(fullDeck());
+  }
+}
+
+function fullDeck() {
   const deck = [];
   for (const s of suits) {
     for (const r of ranks) {
       deck.push(`${r}${s}`);
     }
   }
-  return shuffle(deck);
+  return deck;
 }
 
 // --- Renderizar cartas ---
@@ -26,9 +63,10 @@ function render() {
   grid.innerHTML = "";
   const deck = createDeck();
 
-  deck.forEach(cid => {
+  deck.forEach((cid, index) => {
     const card = document.createElement("playing-card");
     card.setAttribute("cid", cid);
+    card.style.setProperty("--i", index);
     card.addEventListener("click", () => onCardClick(card));
     card.addEventListener("contextmenu", e => e.preventDefault());
     enableDrag(card);
@@ -53,6 +91,7 @@ function onCardClick(card) {
   }
 
   swapClickAnimation(selectedCard, card);
+  checkVictory();
   clearSelection();
 }
 
@@ -198,6 +237,7 @@ function endDrag(x, y) {
 
   if (dropTarget && dropTarget !== draggedCard) {
     swapDragAnimation(draggedCard, dropTarget);
+    checkVictory();
   }
 
   draggedCard = null;
@@ -205,7 +245,7 @@ function endDrag(x, y) {
 }
 
 // --- Validación puzzle ---
-function validate() {
+function isSolved() {
   const cards = Array.from(grid.children).map(c => c.getAttribute("cid"));
   const getSuit = c => c[1];
   const getRank = c => c[0];
@@ -216,16 +256,44 @@ function validate() {
   const diag2 = [3,6,9,12].map(i => cards[i]);
   const groups = [...rows, ...cols, diag1, diag2];
 
-  let ok = true;
   for (const g of groups) {
     const s = new Set(), r = new Set();
     for (const c of g) {
-      if (s.has(getSuit(c)) || r.has(getRank(c))) ok = false;
-      s.add(getSuit(c)); r.add(getRank(c));
+      if (s.has(getSuit(c)) || r.has(getRank(c))) return false;
+      s.add(getSuit(c));
+      r.add(getRank(c));
     }
   }
 
-  message.textContent = ok ? "✅ Correcto" : "❌ Incorrecto";
+  return true;
+}
+
+function validate() {
+  message.textContent = isSolved() ? showVictory() : "❌ Incorrecto";
+}
+
+function checkVictory() {
+  if (gameCompleted) return;
+
+  if (isSolved()) {
+    gameCompleted = true;
+    showVictory();
+
+    checkButton.textContent = "🔄 Reiniciar";
+    checkButton.onclick = resetGame;
+  }
+}
+
+function showVictory() {
+  message.textContent = "🎉 ¡Sudoku completado!";
+  message.style.opacity = "1";
+
+  grid.classList.add("victory");
+
+  // desactivar interacción
+  grid.querySelectorAll("playing-card").forEach(card => {
+    card.style.pointerEvents = "none";
+  });
 }
 
 // --- Shuffle Fisher-Yates ---
@@ -238,8 +306,31 @@ function shuffle(arr) {
   return a;
 }
 
+function resetGame() {
+  // Resetear estado
+  gameCompleted = false;
+  selectedCard = null;
+  draggedCard = null;
+  interactionLock = false;
+  
+  // Limpiar mensaje
+  message.textContent = "";
+  message.style.opacity = "1";
+
+  // Limpiar grid
+  grid.innerHTML = "";
+  grid.classList.remove("victory");
+
+  // Renderizar nuevas cartas
+  render();
+
+  // Restaurar botón
+  checkButton.textContent = "Validar";
+  checkButton.onclick = validate;
+}
+
 // --- Botón validar ---
-document.getElementById("check").onclick = validate;
+checkButton.onclick = validate;
 
 // --- Inicializar ---
 render();

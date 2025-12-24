@@ -151,3 +151,24 @@ button:active {
     display: none;
   }
 }
+
+/* ===== Victoria ===== */
+#grid.victory playing-card {
+  animation: victoryPop 0.4s ease-out both;
+}
+
+#grid.victory playing-card:nth-child(n) {
+  animation-delay: calc(var(--i, 0) * 40ms);
+}
+
+@keyframes victoryPop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
