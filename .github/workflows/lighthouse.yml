@@ -1,4 +1,4 @@
-name: Lighthouse CI
+name: Lighthouse Audit
 
 on:
   push:
@@ -9,5 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Lighthouse CI
+
+      - name: Run Lighthouse
         uses: treosh/lighthouse-ci-action@v8
+        with:
+          urls: https://angelchv.github.io/card-sudoku/
+          artifactName: lighthouse-results
